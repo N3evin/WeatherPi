@@ -1,8 +1,6 @@
 # WeatherPi
-[![ghit.me](https://ghit.me/badge.svg?repo=N3evin/WeatherPi)](https://ghit.me/repo/N3evin/WeatherPi)
-A weather application make for Raspberry Pi with python and tkinter, using Yahoo weather API.
 
-![Imgur](https://i.imgur.com/q91OW11.jpg)
+A weather application make for Raspberry Pi with python and tkinter, using Yahoo weather API.
 
 Weather's icons: [plain weather icons by MerlinTheRed](https://www.deviantart.com/art/plain-weather-icons-157162192)
 
@@ -31,3 +29,4 @@ Y
 ```
 python3 ./main.py
 ```
+![Imgur](https://i.imgur.com/q91OW11m.jpg)
