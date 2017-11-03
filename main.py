@@ -18,8 +18,9 @@ class main():
         # Variables
         self.cityString = None
         self.currentTempString = None
-        self.weatherImage = None
+        self.currentWeatherImage = None
         self.currentTempString = None
+        self.tomorrowTempString = None
         self.weatherLastUpdateString = None
         self.content = None
 
@@ -54,8 +55,8 @@ class main():
         output = http.request('GET', self.url+query)
         self.content = json.loads(output.data.decode('utf-8'))
 
-    # Get the icon image for the weather
-    def getIcon(self):
+    # Get the icon image for the current weather
+    def getCurrentIcon(self):
         icon = PhotoImage(file="./images/" + self.content["query"]["results"]["channel"]["item"]["condition"]["code"] + ".png")
         return icon
 
@@ -65,13 +66,13 @@ class main():
         # Display Current Time
         self.currentTimeString = StringVar()
         currentTime = Label(self.top, textvariable=self.currentTimeString, font=("Pixeled", 25, "bold"), fg="white", bg="black")
-        currentTime.grid(row=0,column=0)
+        currentTime.grid(row=0,column=0, columnspan=2)
         self.currentTimeString.set(datetime.datetime.now().strftime("%H:%M:%S %p"))
 
         # Display Location Name
         self.cityString = StringVar()
         cityName = Label(self.top, textvariable=self.cityString, fg="white", bg="black", font=(None , 15, "bold"))
-        cityName.grid(row=1,column=0)
+        cityName.grid(row=1,column=0, columnspan=2)
         self.cityString.set(self.location)
 
         # Display Current Temperature
@@ -79,16 +80,21 @@ class main():
         currentTemp = Label(self.top, textvariable=self.currentTempString, fg="white", bg="black", font=(None , 15, "bold"))
         currentTemp.grid(row=2,column=0)
 
-        # Display weather images
-        icon = self.getIcon()
-        self.weatherImage = Label(self.top, image=icon, bg="black")
-        self.weatherImage.image = icon
-        self.weatherImage.grid(row=3,column=0)
+        # Display current weather images
+        icon = self.getCurrentIcon()
+        self.currentWeatherImage = Label(self.top, image=icon, bg="black")
+        self.currentWeatherImage.image = icon
+        self.currentWeatherImage.grid(row=3, column=0)
+
+        # Display tomorrow Temperature
+        self.tomorrowTempString = StringVar()
+        tomrropwTemp = Label(self.top, textvariable=self.tomorrowTempString, fg="white", bg="black", font=(None, 15, "bold"))
+        tomrropwTemp.grid(row=2, column=1, padx=20, rowspan=2)
 
         # Display Weather Last Update
         self.weatherLastUpdateString = StringVar()
         weatherLastUpdate = Label(textvariable=self.weatherLastUpdateString, fg="white", bg="black", font=(None, 10, "bold"), anchor="se")
-        weatherLastUpdate.grid(row=4,column=0)
+        weatherLastUpdate.grid(row=4,column=0, columnspan=2)
 
         # refresh data
         self.refreshWeather()
@@ -100,17 +106,23 @@ class main():
     def refreshWeather(self):
         self.updateWeather()
 
-        # Update icon
-        icon = self.getIcon()
-        self.weatherImage.configure(image=icon)
-        self.weatherImage.image = icon
+        # Update current icon
+        icon = self.getCurrentIcon()
+        self.currentWeatherImage.configure(image=icon)
+        self.currentWeatherImage.image = icon
 
-        # Update temperature text
-        temp = float(float(self.content["query"]["results"]["channel"]["item"]["condition"]["temp"])-32)/1.8
-        self.currentTempString.set("Current Temperature: " + str(float("{0:.2f}".format(temp))) + " °C")
+        # Update current temperature text
+        temp = float(float(self.content["query"]["results"]["channel"]["item"]["condition"]["temp"]) - 32) / 1.8
+        self.currentTempString.set("Temp: " + str(float("{0:.2f}".format(temp))) + " °C")
+
+        # Update tomorrow temperature text
+        highTemp = float(float(self.content["query"]["results"]["channel"]["item"]["forecast"][0]["high"]) - 32) / 1.8
+        lowTemp = float(float(self.content["query"]["results"]["channel"]["item"]["forecast"][0]["low"]) - 32) / 1.8
+        tmrWeather = self.content["query"]["results"]["channel"]["item"]["forecast"][0]["text"]
+        self.tomorrowTempString.set("Tomorrow Weather\nHi: " + str(float("{0:.2f}".format(highTemp))) + " °C \nLow: " + str(float("{0:.2f}".format(lowTemp))) + " °C\n" + tmrWeather)
 
         # Update weather last update
-        self.weatherLastUpdateString.set("Last update: " +  str(datetime.datetime.now().strftime("%H:%M:%S %p")))
+        self.weatherLastUpdateString.set("Last update: " +  str(datetime.datetime.now().strftime("%I:%M:%S %p")))
 
         # Refresh Weather
         self.weatherThread = threading.Timer(self.weatherRefresh, self.refreshWeather)
