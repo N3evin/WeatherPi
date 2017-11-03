@@ -16,13 +16,13 @@ class main():
 
     def __init__(self):
         # Variables
-        self.cityString = None
+        self.dateString = None
         self.currentTempString = None
         self.currentWeatherImage = None
         self.currentTempString = None
-        self.tomorrowTempString = None
         self.weatherLastUpdateString = None
         self.content = None
+        self.days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
         # Thread variables
         self.weatherThread = threading.Timer(0, None)
@@ -69,32 +69,27 @@ class main():
         currentTime.grid(row=0,column=0, columnspan=2)
         self.currentTimeString.set(datetime.datetime.now().strftime("%H:%M:%S %p"))
 
-        # Display Location Name
-        self.cityString = StringVar()
-        cityName = Label(self.top, textvariable=self.cityString, fg="white", bg="black", font=(None , 15, "bold"))
-        cityName.grid(row=1,column=0, columnspan=2)
-        self.cityString.set(self.location)
+        # Display Date
+        self.dateString = StringVar()
+        dateInfo = Label(self.top, textvariable=self.dateString, fg="white", bg="black", font=(None , 20, "bold"))
+        dateInfo.grid(row=1,column=0, columnspan=2)
 
-        # Display Current Temperature
+
+        # Display Today Temperature
         self.currentTempString = StringVar()
-        currentTemp = Label(self.top, textvariable=self.currentTempString, fg="white", bg="black", font=(None , 15, "bold"))
-        currentTemp.grid(row=2,column=0)
+        currentTemp = Label(self.top, textvariable=self.currentTempString, fg="white", bg="black", font=(None, 20, "bold"), justify="left")
+        currentTemp.grid(row=2, column=0)
 
         # Display current weather images
         icon = self.getCurrentIcon()
         self.currentWeatherImage = Label(self.top, image=icon, bg="black")
         self.currentWeatherImage.image = icon
-        self.currentWeatherImage.grid(row=3, column=0)
-
-        # Display tomorrow Temperature
-        self.tomorrowTempString = StringVar()
-        tomrropwTemp = Label(self.top, textvariable=self.tomorrowTempString, fg="white", bg="black", font=(None, 15, "bold"))
-        tomrropwTemp.grid(row=2, column=1, padx=20, rowspan=2)
+        self.currentWeatherImage.grid(row=2, column=1, padx=30)
 
         # Display Weather Last Update
         self.weatherLastUpdateString = StringVar()
-        weatherLastUpdate = Label(textvariable=self.weatherLastUpdateString, fg="white", bg="black", font=(None, 10, "bold"), anchor="se")
-        weatherLastUpdate.grid(row=4,column=0, columnspan=2)
+        weatherLastUpdate = Label(textvariable=self.weatherLastUpdateString, fg="white", bg="black", font=(None, 10, "bold"))
+        weatherLastUpdate.grid(row=3,column=0, columnspan=2)
 
         # refresh data
         self.refreshWeather()
@@ -113,13 +108,9 @@ class main():
 
         # Update current temperature text
         temp = float(float(self.content["query"]["results"]["channel"]["item"]["condition"]["temp"]) - 32) / 1.8
-        self.currentTempString.set("Temp: " + str(float("{0:.2f}".format(temp))) + " °C")
-
-        # Update tomorrow temperature text
         highTemp = float(float(self.content["query"]["results"]["channel"]["item"]["forecast"][0]["high"]) - 32) / 1.8
         lowTemp = float(float(self.content["query"]["results"]["channel"]["item"]["forecast"][0]["low"]) - 32) / 1.8
-        tmrWeather = self.content["query"]["results"]["channel"]["item"]["forecast"][0]["text"]
-        self.tomorrowTempString.set("Tomorrow Weather\nHi: " + str(float("{0:.2f}".format(highTemp))) + " °C \nLow: " + str(float("{0:.2f}".format(lowTemp))) + " °C\n" + tmrWeather)
+        self.currentTempString.set("Current: " + str(int(temp)) + "°\nHigh: " + str(int(highTemp)) + "°\nLow: " + str(int(lowTemp)) + "°")
 
         # Update weather last update
         self.weatherLastUpdateString.set("Last update: " +  str(datetime.datetime.now().strftime("%I:%M:%S %p")))
@@ -130,8 +121,12 @@ class main():
 
     # Refresh Time info
     def refreshTime(self):
-        # Set Time
+        # Update  Time
         self.currentTimeString.set(datetime.datetime.now().strftime("%I:%M:%S %p"))
+
+        # Update date
+        day = datetime.datetime.today().weekday()
+        self.dateString.set(self.days[day] + ", " + datetime.datetime.now().strftime("%d/%m/%Y"))
 
         # Refresh Time
         self.timeThread = threading.Timer(1, self.refreshTime)
