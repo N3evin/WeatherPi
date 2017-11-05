@@ -57,7 +57,11 @@ class main():
 
     # Get the icon image for the current weather
     def getCurrentIcon(self):
-        icon = PhotoImage(file="./images/" + self.content["query"]["results"]["channel"]["item"]["condition"]["code"] + ".png")
+        try:
+            icon = PhotoImage(file="./images/" + self.content["query"]["results"]["channel"]["item"]["condition"]["code"] + ".png")
+            return icon
+        except Exception:
+            icon = PhotoImage(file="./images/3200.png")
         return icon
 
     # Initial run start up.
