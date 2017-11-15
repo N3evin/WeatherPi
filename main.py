@@ -53,7 +53,11 @@ class main():
         query = """select * from weather.forecast where woeid in (select woeid from geo.places(1) where text=\"""" + self.location + """\")&format=json"""
         query = query.replace(" ","%20")
         output = http.request('GET', self.url+query)
-        self.content = json.loads(output.data.decode('utf-8'))
+        # Ignore decode problem.
+        try:
+            self.content = json.loads(output.data.decode('utf-8'))
+        except Exception:
+            pass
 
     # Get the icon image for the current weather
     def getCurrentIcon(self):
