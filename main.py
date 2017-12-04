@@ -11,7 +11,7 @@ class main():
     # Config
     location = "Melbourne, Clayton" # {Country} or {Country, City} without parenthesis.
     url = "https://query.yahooapis.com/v1/public/yql?q="
-    weatherRefresh = 300 # in seconds, default 5 minutes
+    weatherRefresh = 600 # in seconds, default 10 minutes
 
 
     def __init__(self):
@@ -47,7 +47,7 @@ class main():
 
 
     # Retrieve weather from url and update weather.
-    def updateWeather(self):
+    def updateWeather(self):`
         # Reading weather info
         http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
         query = """select * from weather.forecast where woeid in (select woeid from geo.places(1) where text=\"""" + self.location + """\")&format=json"""
