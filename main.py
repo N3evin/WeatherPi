@@ -47,7 +47,7 @@ class main():
 
 
     # Retrieve weather from url and update weather.
-    def updateWeather(self):`
+    def updateWeather(self):
         # Reading weather info
         http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
         query = """select * from weather.forecast where woeid in (select woeid from geo.places(1) where text=\"""" + self.location + """\")&format=json"""
